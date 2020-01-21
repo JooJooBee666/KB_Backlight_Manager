@@ -4,9 +4,11 @@ package com.madhopssoft.pro1kbbacklighttoggle;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -35,7 +37,11 @@ public class P1KBTileService extends TileService {
         Log.i(TAG, "onTileAdded");
         Tile tile = getQsTile();
         if (tile != null) {
-            tile.setState(Tile.STATE_INACTIVE);
+            if (MainActivity.getLightState()) {
+                tile.setState(Tile.STATE_ACTIVE);
+            } else {
+                tile.setState(Tile.STATE_INACTIVE);
+            }
             tile.updateTile();
         }
         super.onStartListening();
@@ -53,17 +59,30 @@ public class P1KBTileService extends TileService {
         Log.i(TAG, "onStartListening");
         Tile tile = getQsTile();
         if (tile != null) {
-            tile.setState(Tile.STATE_ACTIVE);
+            if (MainActivity.getLightState()) {
+                tile.setState(Tile.STATE_ACTIVE);
+            } else {
+                tile.setState(Tile.STATE_INACTIVE);
+            }
             tile.updateTile();
         }
-        super.onStartListening();
+        try {
+            new IntentFilter();
+            IntentFilter filter;
+            filter = new IntentFilter("TOGGLE_P1KBBL");
+            this.registerReceiver(toggleReceiver, filter);
 
+        } catch (Exception e) {
+            Log.e(TAG,"Failed to register receiver. " + e.getMessage());
+        }
+        super.onStartListening();
     }
 
     @Override
     public void onStopListening() {
         super.onStopListening();
         Log.i(TAG, "onStopListening");
+        this.unregisterReceiver(toggleReceiver);
     }
 
     @Override
@@ -80,7 +99,7 @@ public class P1KBTileService extends TileService {
         //update tile
         try {
             updateTileForOnOrOff();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -100,48 +119,48 @@ public class P1KBTileService extends TileService {
         Log.i(TAG, "onDestroy");
     }
 
-    private void updateTileForOnOrOff() throws IOException {
+    public void updateTileForOnOrOff() {
 
         Tile tile = this.getQsTile();
 
-        Boolean lightEnabled = MainActivity.getLightState();
+        boolean lightEnabled = MainActivity.getLightState();
 
         if (lightEnabled) {
-            MainActivity.toggleBacklight("0");
+            MainActivity.toggleBacklightBit(false);
         } else
         {
-            MainActivity.toggleBacklight("1");
+            MainActivity.toggleBacklightBit(true);
         }
 
         //Icon icon;
         //String label;
-        //int state;
+        int state;
 
         // Change the tile to match the service status.
-        //if (tile.getState() == tile.STATE_INACTIVE) {
+        if (tile.getState() == Tile.STATE_INACTIVE) {
 
         //    label = "On ";
-        //    MainActivity.toggleBacklight("1");
+            MainActivity.toggleBacklightBit(true);
         //    icon = Icon.createWithResource(getApplicationContext(), R.drawable.ic_world);
 
-        //    state = Tile.STATE_ACTIVE;
+            state = Tile.STATE_ACTIVE;
 
-        //} else {
+        } else {
 
-        //    label = "Off";
-        //    MainActivity.toggleBacklight("0");
+         //   label = "Off";
+            MainActivity.toggleBacklightBit(false);
         //    icon = Icon.createWithResource(getApplicationContext(), android.R.drawable.ic_dialog_alert);
 
-        //    state = Tile.STATE_INACTIVE;
-        //}
+            state = Tile.STATE_INACTIVE;
+        }
 
         // Update the UI of the tile.
         // tile.setLabel(label);
         // tile.setIcon(icon);
-        // tile.setState(state);
+        tile.setState(state);
 
         // call updateTile to show changes.
-        //tile.updateTile();
+        tile.updateTile();
     }
 
     private void updateTileByAnimation() {
@@ -178,10 +197,6 @@ public class P1KBTileService extends TileService {
     public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
         Drawable drawable = AppCompatDrawableManager.get().getDrawable(context, drawableId);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
-
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
                 drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -190,6 +205,20 @@ public class P1KBTileService extends TileService {
 
         return bitmap;
     }
+
+    public BroadcastReceiver toggleReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (action != null && action.equals("TOGGLE_P1KBBL")) {
+                Log.d(TAG, "Received Toggle Intent");
+                updateTileForOnOrOff();
+            }
+        }
+
+    };
 
     public void generateDialogAndShow() {
 

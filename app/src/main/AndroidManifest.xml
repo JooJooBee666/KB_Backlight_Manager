@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.madhopssoft.pro1kbbacklighttoggle">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.madhopssoft.pro1kbbacklighttoggle"
+    >
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -9,13 +14,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".P1KBBacklightService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+
+        </service>
 
         <service
             android:name=".P1KBTileService"
@@ -33,6 +49,20 @@
                 android:value="true" />
 
         </service>
+
+        <receiver android:name="com.madhopssoft.pro1kbbacklighttoggle.P1KBStartupReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter android:directBootAware="true">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.REBOOT"/>
+                <action android:name="android.intent.action.ACTION_SCREEN_ON"/>
+                <action android:name="lineageos.intent.action.LID_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 
