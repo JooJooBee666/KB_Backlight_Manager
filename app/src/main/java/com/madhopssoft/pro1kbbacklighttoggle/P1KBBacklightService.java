@@ -9,12 +9,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+
+import java.util.Objects;
 
 
 public class P1KBBacklightService extends Service {
@@ -53,7 +56,7 @@ public class P1KBBacklightService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (intent.getAction().equals(Constants.ACTION.START_FOREGROUND_ACTION)) {
+        if (Objects.requireNonNull(intent.getAction()).equals(Constants.ACTION.START_FOREGROUND_ACTION)) {
             Log.d(TAG, "Received Start Foreground Intent");
             try {
                 String input = intent.getStringExtra("inputExtra");
@@ -125,9 +128,14 @@ public class P1KBBacklightService extends Service {
     public BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent myIntent) {
+            //if the user want's the backlight to stay disabled then ensure it is disabled
+            SharedPreferences settings = context.getSharedPreferences(Constants.PREFS_NAME, 0);
+            boolean keepBacklightOff = settings.getBoolean("keepBacklightOff", true);
 
             // Toggle Backlight when the lid state changes
             if (lineageos.content.Intent.ACTION_LID_STATE_CHANGED.equals(myIntent.getAction())) {
+
+
                 int lidState = myIntent.getIntExtra(lineageos.content.Intent.EXTRA_LID_STATE, -1);
                 if (lidState == LID_CLOSED) {
                     Log.d(TAG,"LID_CLOSED detected.");
@@ -136,7 +144,11 @@ public class P1KBBacklightService extends Service {
 
                 } else {
                     Log.d(TAG,"LID_OPEN detected.");
-                    MainActivity.toggleBacklightBit(true);
+                    if (keepBacklightOff) {
+                        MainActivity.toggleBacklightBit(false);
+                    } else {
+                        MainActivity.toggleBacklightBit(true);
+                    }
                     kbOpened = true;
                 }
                 MainActivity.updateTileStatus(context);
@@ -146,7 +158,12 @@ public class P1KBBacklightService extends Service {
                 //if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 if (kbOpened) {
                     Log.d(TAG, "Resume - backlight enabled");
-                    MainActivity.toggleBacklightBit(true);
+                    Log.d(TAG,"LID_OPEN detected.");
+                    if (keepBacklightOff) {
+                        MainActivity.toggleBacklightBit(false);
+                    } else {
+                        MainActivity.toggleBacklightBit(true);
+                    }
                     MainActivity.updateTileStatus(context);
                 }
             }

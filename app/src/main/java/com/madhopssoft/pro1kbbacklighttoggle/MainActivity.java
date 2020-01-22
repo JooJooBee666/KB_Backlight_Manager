@@ -33,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private static TextView serviceStatusText;
     private static ToggleButton toggleServiceButton;
     private static Switch startupSwitch;
+    private static Switch keepBacklightOffSwitch;
     public static Boolean startOnBoot = true;
+    public static Boolean keepBacklightOff = false;
     boolean serviceBound = false;
 
     P1KBBacklightService backlightService;
@@ -46,14 +48,26 @@ public class MainActivity extends AppCompatActivity {
         serviceStatusText = findViewById(R.id.serviceStatusText);
         toggleServiceButton = findViewById(R.id.toggleServiceButton);
         startupSwitch = findViewById(R.id.startOnBootSwitch);
+        keepBacklightOffSwitch = findViewById(R.id.backlightDisabledSwitch);
 
         SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
         startOnBoot = settings.getBoolean("startOnBoot", true);
+        keepBacklightOff = settings.getBoolean("keepBacklightOff", false);
         startupSwitch.setChecked(startOnBoot);
+        keepBacklightOffSwitch.setChecked(keepBacklightOff);
+
         startupSwitch.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 startOnBoot = startupSwitch.isChecked();
+                SaveSettings();
+            }
+        });
+
+        keepBacklightOffSwitch.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                keepBacklightOff = keepBacklightOffSwitch.isChecked();
                 SaveSettings();
             }
         });
@@ -103,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("startOnBoot", startOnBoot);
+        editor.putBoolean("keepBacklightOff", keepBacklightOff);
 
         // Commit the edits
         editor.apply();

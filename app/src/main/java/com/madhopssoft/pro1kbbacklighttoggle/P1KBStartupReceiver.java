@@ -48,6 +48,7 @@ public class P1KBStartupReceiver extends BroadcastReceiver {
                 Intent i = new Intent(context, P1KBBacklightService.class);
                 i.putExtra("inputExtra", "Turns on the KB Backlight when screen is in landscape");
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.setAction(Constants.ACTION.START_FOREGROUND_ACTION);
                 context.startForegroundService(i);
             } catch (Exception e) {
                 e.printStackTrace();

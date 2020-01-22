@@ -63,5 +63,18 @@
         android:layout_marginTop="16dp"
         app:srcCompat="@drawable/logo" />
 
+    <Switch
+        android:id="@+id/backlightDisabledSwitch"
+        android:layout_width="287dp"
+        android:layout_height="86dp"
+        android:layout_below="@+id/startOnBootSwitch"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="-328dp"
+        android:layout_marginEnd="54dp"
+        android:text="Keep Backlight Off"
+        android:textSize="18sp" />
+
 
 </RelativeLayout>
