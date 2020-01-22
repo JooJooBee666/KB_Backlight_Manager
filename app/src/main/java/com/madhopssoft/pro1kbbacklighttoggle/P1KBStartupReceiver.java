@@ -19,6 +19,7 @@ public class P1KBStartupReceiver extends BroadcastReceiver {
                 Objects.equals(intent.getAction(), Intent.ACTION_LOCKED_BOOT_COMPLETED) ||
                 Objects.equals(intent.getAction(), Intent.ACTION_REBOOT)) {
 
+
             //Verify the option to start on boot is enabled
             SharedPreferences settings = context.getSharedPreferences(Constants.PREFS_NAME, 0);
             boolean startOnBoot = settings.getBoolean("startOnBoot", true);
@@ -45,13 +46,13 @@ public class P1KBStartupReceiver extends BroadcastReceiver {
                     }
                 }
 
-                Intent i = new Intent(context, P1KBBacklightService.class);
-                i.putExtra("inputExtra", "Turns on the KB Backlight when screen is in landscape");
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.setAction(Constants.ACTION.START_FOREGROUND_ACTION);
-                context.startForegroundService(i);
+                Intent serviceIntent = new Intent(context, P1KBBacklightService.class);
+                serviceIntent.putExtra("inputExtra", "Turns on the KB Backlight when screen is in landscape");
+                serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                serviceIntent.setAction(Constants.ACTION.START_FOREGROUND_ACTION);
+                context.startForegroundService(serviceIntent);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.d(TAG,"Service failed to start on boot. " + e.getMessage());
             }
         }
     }

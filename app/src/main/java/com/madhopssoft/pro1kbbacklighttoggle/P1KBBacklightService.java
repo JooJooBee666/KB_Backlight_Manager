@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -130,7 +129,7 @@ public class P1KBBacklightService extends Service {
         public void onReceive(Context context, Intent myIntent) {
             //if the user want's the backlight to stay disabled then ensure it is disabled
             SharedPreferences settings = context.getSharedPreferences(Constants.PREFS_NAME, 0);
-            boolean keepBacklightOff = settings.getBoolean("keepBacklightOff", true);
+            boolean keepBacklightOff = settings.getBoolean("keepBacklightOff", false);
 
             // Toggle Backlight when the lid state changes
             if (lineageos.content.Intent.ACTION_LID_STATE_CHANGED.equals(myIntent.getAction())) {
