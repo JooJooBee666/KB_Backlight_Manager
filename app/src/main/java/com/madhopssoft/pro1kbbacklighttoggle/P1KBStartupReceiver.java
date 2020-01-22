@@ -52,7 +52,8 @@ public class P1KBStartupReceiver extends BroadcastReceiver {
                 serviceIntent.setAction(Constants.ACTION.START_FOREGROUND_ACTION);
                 context.startForegroundService(serviceIntent);
             } catch (Exception e) {
-                Log.d(TAG,"Service failed to start on boot. " + e.getMessage());
+                Log.e(TAG,"Service failed to start on boot.");
+                e.printStackTrace();
             }
         }
     }

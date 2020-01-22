@@ -48,8 +48,10 @@ public class P1KBBacklightService extends Service {
         try {
             MainActivity.updateServiceStatus("Stopped");
         } catch (Exception e) {
+            Log.w(TAG,"Failed to update service status on MainActivity.");
             e.printStackTrace();
         }
+        Log.d(TAG,"Service DESTRUCTION!");
     }
 
     @Override
@@ -76,10 +78,12 @@ public class P1KBBacklightService extends Service {
                     MainActivity.updateServiceStatus("Running");
                     MainActivity.updateTileStatus(this);
                 } catch (Exception e) {
-                    Log.e(TAG,"Failed to update service status on MainActivity. " + e.getMessage());
+                    Log.w(TAG,"Failed to update service status on MainActivity.");
+                    e.printStackTrace();
                 }
             } catch (Exception e) {
-                Log.e(TAG,"Failed to update service status on MainActivity. " + e.getMessage());
+                Log.e(TAG,"Failed to start service.");
+                e.printStackTrace();
             }
         } else if (intent.getAction().equals(Constants.ACTION.STOP_FOREGROUND_ACTION)) {
             Log.d(TAG, "Received Stop Foreground Intent");
@@ -87,7 +91,8 @@ public class P1KBBacklightService extends Service {
             try {
                 MainActivity.updateServiceStatus("Stopped");
             } catch (Exception e) {
-
+                Log.w(TAG,"Failed to update service status on MainActivity.");
+                e.printStackTrace();
             }
             stopForeground(true);
             stopSelf();

@@ -158,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
                 P1KBBacklightService.P1KBLocalBinder binder = (P1KBBacklightService.P1KBLocalBinder) service;
                 backlightService = binder.getService();
                 serviceBound = true;
-
             }
 
         @Override
@@ -184,7 +183,8 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         } catch (IOException e) {
-            Log.e (TAG, "Error reading light state. " + e.getMessage());
+            Log.e (TAG, "Error reading light state.");
+            e.printStackTrace();
             return false;
         }
     }
@@ -198,7 +198,8 @@ public class MainActivity extends AppCompatActivity {
             fos.write(bytes);
             fos.close();
         } catch (Exception e) {
-            Log.e(TAG,"Failed to write bit. " + e.getMessage());
+            Log.e(TAG,"Failed to write backlight bytes.");
+            e.printStackTrace();
         }
 
     }
@@ -206,11 +207,11 @@ public class MainActivity extends AppCompatActivity {
         try {
             TileService.requestListeningState(context, new ComponentName(context, P1KBTileService.class));
             Log.d(TAG, "Sending Quicksetting toggle update intent.");
-            Intent i = new Intent(Constants.ACTION.TOGGLE_P1KEYBOARD_BACKLIGHT);
-            thisActivity.sendBroadcast(i);
-
+            Intent tileIntent = new Intent(Constants.ACTION.TOGGLE_P1KEYBOARD_BACKLIGHT);
+            thisActivity.sendBroadcast(tileIntent);
         } catch (Exception e) {
-            Log.e(TAG, "Failed to send intent. " + e.getMessage());
+            Log.e(TAG, "Failed to send intent.");
+            e.printStackTrace();
         }
     }
     public static void updateServiceStatus (String status){
