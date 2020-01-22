@@ -72,6 +72,7 @@ public class P1KBBacklightService extends Service {
                 serviceRunning = true;
                 try {
                     MainActivity.updateServiceStatus("Running");
+                    MainActivity.updateTileStatus(this);
                 } catch (Exception e) {
                     Log.e(TAG,"Failed to update service status on MainActivity. " + e.getMessage());
                 }
