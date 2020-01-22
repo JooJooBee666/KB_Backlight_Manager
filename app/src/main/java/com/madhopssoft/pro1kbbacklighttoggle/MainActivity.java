@@ -7,8 +7,11 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.provider.SyncStateContract;
 import android.service.quicksettings.TileService;
 import android.util.Log;
 import android.view.View;
@@ -30,8 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private static TextView serviceStatusText;
     private static ToggleButton toggleServiceButton;
     private static Switch startupSwitch;
-    public static final String PREFS_NAME = "P1KBPrefsFile";
     public static Boolean startOnBoot = true;
+    boolean serviceBound = false;
+
+    P1KBBacklightService backlightService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         toggleServiceButton = findViewById(R.id.toggleServiceButton);
         startupSwitch = findViewById(R.id.startOnBootSwitch);
 
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
         startOnBoot = settings.getBoolean("startOnBoot", true);
         startupSwitch.setChecked(startOnBoot);
         startupSwitch.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
@@ -53,6 +58,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        try {
+            if (!serviceBound) {
+                //Try to bind to background service if running
+                bindService(new Intent(this,
+                        P1KBBacklightService.class), mConnection, Context.BIND_AUTO_CREATE);
+                serviceBound = true;
+            }
+        } catch (Exception e) {
+           Log.d(TAG,"Service not running.");
+        }
+
+        // update the UI based off of the service status (if found)
+        if (serviceBound) {
+            if (backlightService.serviceRunning) {
+                updateServiceStatus("Running");
+                toggleServiceButton.setChecked(true);
+            } else {
+                updateServiceStatus("Stopped");
+                toggleServiceButton.setChecked(false);
+            }
+        }
         toggleServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,13 +100,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void SaveSettings() {
         //Save startup preference
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("startOnBoot", startOnBoot);
 
         // Commit the edits
         editor.apply();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (serviceBound && thisActivity != null) {
+            thisActivity.unbindService(mConnection);
+            thisActivity = null;
+        }
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -89,13 +125,35 @@ public class MainActivity extends AppCompatActivity {
     public void startService() {
         Intent serviceIntent = new Intent(this, P1KBBacklightService.class);
         serviceIntent.putExtra("inputExtra", "Turns on the KB Backlight when screen is in landscape");
+        serviceIntent.setAction(Constants.ACTION.START_FOREGROUND_ACTION);
         ContextCompat.startForegroundService(this, serviceIntent);
+        bindService(new Intent(this,
+                P1KBBacklightService.class), mConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void stopService() {
         Intent serviceIntent = new Intent(this, P1KBBacklightService.class);
-        stopService(serviceIntent);
+        serviceIntent.setAction(Constants.ACTION.STOP_FOREGROUND_ACTION);
+        unbindService(mConnection);
+        this.stopService(serviceIntent);
     }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                P1KBBacklightService.P1KBLocalBinder binder = (P1KBBacklightService.P1KBLocalBinder) service;
+                backlightService = binder.getService();
+                serviceBound = true;
+
+            }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            backlightService = null;
+            serviceBound = false;
+        }
+    };
 
     public static boolean getLightState()  {
         try {
@@ -135,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             TileService.requestListeningState(context, new ComponentName(context, P1KBTileService.class));
             Log.d(TAG, "Sending Quicksetting toggle update intent.");
-            Intent i = new Intent("TOGGLE_P1KBBL");
+            Intent i = new Intent(Constants.ACTION.TOGGLE_P1KEYBOARD_BACKLIGHT);
             thisActivity.sendBroadcast(i);
 
         } catch (Exception e) {

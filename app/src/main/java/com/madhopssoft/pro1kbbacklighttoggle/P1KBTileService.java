@@ -14,17 +14,12 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
-import android.os.Build;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-
-
 import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatDrawableManager;
-import androidx.core.graphics.drawable.DrawableCompat;
 
-import java.io.IOException;
 
 
 public class P1KBTileService extends TileService {
@@ -102,15 +97,16 @@ public class P1KBTileService extends TileService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        /*
+        update tile by Animation
+        updateTileByAnimation();
 
-        //update tile by Animation
-        //updateTileByAnimation();
+        show dialog
+        generateDialogAndShow();
 
-        //show dialog
-        //generateDialogAndShow();
-
-        //checking lock and if user enter password, run runnableForUnlock
-        //unlockAndRun(runnableForUnlock);
+        checking lock and if user enter password, run runnableForUnlock
+        unlockAndRun(runnableForUnlock);
+        */
     }
 
     @Override
@@ -212,7 +208,7 @@ public class P1KBTileService extends TileService {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            if (action != null && action.equals("TOGGLE_P1KBBL")) {
+            if (action != null && action.equals(Constants.ACTION.TOGGLE_P1KEYBOARD_BACKLIGHT)) {
                 Log.d(TAG, "Received Toggle Intent");
                 updateTileForOnOrOff();
             }

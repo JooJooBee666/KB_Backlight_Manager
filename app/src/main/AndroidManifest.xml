@@ -30,7 +30,10 @@
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-
+            <intent-filter>
+                <action android:name="lineageos.intent.action.LID_STATE_CHANGED" />
+                <action android:name="android.intent.action.ACTION_SCREEN_ON"/>
+            </intent-filter>
         </service>
 
         <service
@@ -52,15 +55,15 @@
 
         <receiver android:name="com.madhopssoft.pro1kbbacklighttoggle.P1KBStartupReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:directBootAware="true">
 
-            <intent-filter android:directBootAware="true">
+            <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="android.intent.action.REBOOT"/>
-                <action android:name="android.intent.action.ACTION_SCREEN_ON"/>
-                <action android:name="lineageos.intent.action.LID_STATE_CHANGED" />
+
             </intent-filter>
         </receiver>
 
