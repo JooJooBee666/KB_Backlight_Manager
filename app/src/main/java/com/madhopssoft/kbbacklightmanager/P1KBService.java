@@ -70,7 +70,7 @@ public class P1KBService extends Service {
                 PendingIntent pendingIntent = PendingIntent.getActivity(this,
                         0, notificationIntent, 0);
                 Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setContentTitle("Pro1 KB Backlight Service")
+                        .setContentTitle("Pro1 KB Backlight Manager")
                         .setContentText(input)
                         .setOngoing(true)
                         .setSmallIcon(R.mipmap.ic_notif2)

@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startService() {
         Intent serviceIntent = new Intent(this, P1KBService.class);
-        serviceIntent.putExtra("inputExtra", "Turns on the KB Backlight when screen is in landscape");
+        serviceIntent.putExtra("inputExtra", getString(R.string.foreground_service_info));
         serviceIntent.setAction(Constants.ACTION.START_FOREGROUND_ACTION);
         ContextCompat.startForegroundService(this, serviceIntent);
         bindService(new Intent(this,

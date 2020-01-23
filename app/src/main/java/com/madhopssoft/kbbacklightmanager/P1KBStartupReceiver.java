@@ -47,7 +47,7 @@ public class P1KBStartupReceiver extends BroadcastReceiver {
                 }
 
                 Intent serviceIntent = new Intent(context, P1KBService.class);
-                serviceIntent.putExtra("inputExtra", (R.string.foreground_service_info));
+                serviceIntent.putExtra("inputExtra", context.getString(R.string.foreground_service_info));
                 serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 serviceIntent.setAction(Constants.ACTION.START_FOREGROUND_ACTION);
                 context.startForegroundService(serviceIntent);
