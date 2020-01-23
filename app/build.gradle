@@ -4,11 +4,11 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.0"
     defaultConfig {
-        applicationId "com.madhopssoft.pro1kbbacklighttoggle"
+        applicationId "com.madhopssoft.kbbacklightmanager"
         minSdkVersion 28
         targetSdkVersion 29
         versionCode 1
-        versionName "1.1.22.0"
+        versionName "1.1.22.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

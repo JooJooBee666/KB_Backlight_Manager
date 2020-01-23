@@ -1,4 +1,4 @@
-package com.madhopssoft.pro1kbbacklighttoggle;
+package com.madhopssoft.kbbacklightmanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public static Boolean keepBacklightOff = false;
     boolean serviceBound = false;
 
-    P1KBBacklightService backlightService;
+    P1KBService backlightService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             if (!serviceBound) {
                 //Try to bind to background service if running
                 bindService(new Intent(this,
-                        P1KBBacklightService.class), mConnection, Context.BIND_AUTO_CREATE);
+                        P1KBService.class), mConnection, Context.BIND_AUTO_CREATE);
                 serviceBound = true;
             }
         } catch (Exception e) {
@@ -136,16 +136,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startService() {
-        Intent serviceIntent = new Intent(this, P1KBBacklightService.class);
+        Intent serviceIntent = new Intent(this, P1KBService.class);
         serviceIntent.putExtra("inputExtra", "Turns on the KB Backlight when screen is in landscape");
         serviceIntent.setAction(Constants.ACTION.START_FOREGROUND_ACTION);
         ContextCompat.startForegroundService(this, serviceIntent);
         bindService(new Intent(this,
-                P1KBBacklightService.class), mConnection, Context.BIND_AUTO_CREATE);
+                P1KBService.class), mConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void stopService() {
-        Intent serviceIntent = new Intent(this, P1KBBacklightService.class);
+        Intent serviceIntent = new Intent(this, P1KBService.class);
         serviceIntent.setAction(Constants.ACTION.STOP_FOREGROUND_ACTION);
         unbindService(mConnection);
         this.stopService(serviceIntent);
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                P1KBBacklightService.P1KBLocalBinder binder = (P1KBBacklightService.P1KBLocalBinder) service;
+                P1KBService.P1KBLocalBinder binder = (P1KBService.P1KBLocalBinder) service;
                 backlightService = binder.getService();
                 serviceBound = true;
             }

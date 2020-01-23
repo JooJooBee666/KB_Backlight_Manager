@@ -1,4 +1,4 @@
-package com.madhopssoft.pro1kbbacklighttoggle;
+package com.madhopssoft.kbbacklightmanager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,7 +46,7 @@ public class P1KBStartupReceiver extends BroadcastReceiver {
                     }
                 }
 
-                Intent serviceIntent = new Intent(context, P1KBBacklightService.class);
+                Intent serviceIntent = new Intent(context, P1KBService.class);
                 serviceIntent.putExtra("inputExtra", "Turns on the KB Backlight when screen is in landscape");
                 serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 serviceIntent.setAction(Constants.ACTION.START_FOREGROUND_ACTION);

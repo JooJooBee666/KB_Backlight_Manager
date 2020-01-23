@@ -5,10 +5,10 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin">
+    android:paddingLeft="0dp"
+    android:paddingTop="0dp"
+    android:paddingRight="0dp"
+    android:paddingBottom="0dp">
 
 
     <TextView
@@ -18,12 +18,12 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="49dp"
+        android:layout_marginStart="48dp"
         android:layout_marginEnd="48dp"
         android:layout_marginBottom="0dp"
         android:gravity="center"
         android:textSize="18sp"
-        android:text="Service Status: Stopped" />
+        android:text="@string/service_status_stopped" />
 
     <Switch
         android:id="@+id/startOnBootSwitch"
@@ -37,7 +37,7 @@
         android:layout_marginTop="219dp"
         android:layout_marginEnd="54dp"
         android:layout_marginBottom="371dp"
-        android:text="Enable on Boot"
+        android:text="@string/enable_on_boot"
         android:textColorLink="#E91E63"
         android:textSize="18sp" />
 
@@ -51,17 +51,18 @@
         android:layout_marginStart="75dp"
         android:layout_marginEnd="75dp"
         android:layout_marginBottom="26dp"
-        android:text="ToggleButton"
-        android:textOff="Start Service"
-        android:textOn="Stop Service" />
+        android:text="ServiceToggleButton"
+        android:textOff="@string/start_service"
+        android:textOn="@string/stop_service" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="133dp"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="16dp"
-        app:srcCompat="@drawable/logo" />
+        android:layout_marginTop="0dp"
+        android:scaleType="centerCrop"
+        app:srcCompat="@mipmap/banner" />
 
     <Switch
         android:id="@+id/backlightDisabledSwitch"
@@ -73,7 +74,7 @@
         android:layout_marginStart="54dp"
         android:layout_marginTop="-328dp"
         android:layout_marginEnd="54dp"
-        android:text="Keep Backlight Off"
+        android:text="@string/keep_backlight_off"
         android:textSize="18sp" />
 
 

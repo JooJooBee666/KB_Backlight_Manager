@@ -1,4 +1,4 @@
-package com.madhopssoft.pro1kbbacklighttoggle;
+package com.madhopssoft.kbbacklightmanager;
 
 
 import android.animation.ValueAnimator;

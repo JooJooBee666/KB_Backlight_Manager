@@ -1,4 +1,4 @@
-package com.madhopssoft.pro1kbbacklighttoggle;
+package com.madhopssoft.kbbacklightmanager;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -18,10 +18,12 @@ import androidx.core.app.NotificationCompat;
 
 import java.util.Objects;
 
+import static com.madhopssoft.kbbacklightmanager.MainActivity.*;
 
-public class P1KBBacklightService extends Service {
 
-    private final String TAG = "P1KBBacklightService";
+public class P1KBService extends Service {
+
+    private final String TAG = "P1KBService";
     private final int LID_CLOSED = 0;
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
     public static boolean serviceRunning = false;
@@ -46,7 +48,7 @@ public class P1KBBacklightService extends Service {
         serviceRunning = false;
         this.unregisterReceiver(mBroadcastReceiver);
         try {
-            MainActivity.updateServiceStatus("Stopped");
+            updateServiceStatus("Stopped");
         } catch (Exception e) {
             Log.w(TAG,"Failed to update service status on MainActivity.");
             e.printStackTrace();
@@ -56,7 +58,9 @@ public class P1KBBacklightService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        if (intent == null){
+            Log.e(TAG,"No intent sent to service. Not action taken.");
+        }
         if (Objects.requireNonNull(intent.getAction()).equals(Constants.ACTION.START_FOREGROUND_ACTION)) {
             Log.d(TAG, "Received Start Foreground Intent");
             try {
@@ -75,8 +79,8 @@ public class P1KBBacklightService extends Service {
                 startForeground(1, notification);
                 serviceRunning = true;
                 try {
-                    MainActivity.updateServiceStatus("Running");
-                    MainActivity.updateTileStatus(this);
+                    updateServiceStatus("Running");
+                    updateTileStatus(this);
                 } catch (Exception e) {
                     Log.w(TAG,"Failed to update service status on MainActivity.");
                     e.printStackTrace();
@@ -89,7 +93,7 @@ public class P1KBBacklightService extends Service {
             Log.d(TAG, "Received Stop Foreground Intent");
             //your end servce code
             try {
-                MainActivity.updateServiceStatus("Stopped");
+                updateServiceStatus("Stopped");
             } catch (Exception e) {
                 Log.w(TAG,"Failed to update service status on MainActivity.");
                 e.printStackTrace();
@@ -116,10 +120,10 @@ public class P1KBBacklightService extends Service {
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
-    public class P1KBLocalBinder extends Binder {
-        P1KBBacklightService getService() {
+    class P1KBLocalBinder extends Binder {
+        P1KBService getService() {
             // Return this instance of LocalService so clients can call public methods
-            return P1KBBacklightService.this;
+            return P1KBService.this;
         }
     }
 
@@ -143,19 +147,19 @@ public class P1KBBacklightService extends Service {
                 int lidState = myIntent.getIntExtra(lineageos.content.Intent.EXTRA_LID_STATE, -1);
                 if (lidState == LID_CLOSED) {
                     Log.d(TAG,"LID_CLOSED detected.");
-                    MainActivity.toggleBacklightBit(false);
+                    toggleBacklightBit(false);
                     kbOpened = false;
 
                 } else {
                     Log.d(TAG,"LID_OPEN detected.");
                     if (keepBacklightOff) {
-                        MainActivity.toggleBacklightBit(false);
+                        toggleBacklightBit(false);
                     } else {
-                        MainActivity.toggleBacklightBit(true);
+                        toggleBacklightBit(true);
                     }
                     kbOpened = true;
                 }
-                MainActivity.updateTileStatus(context);
+                updateTileStatus(context);
             }
 
             if (myIntent.getAction().equals(Intent.ACTION_SCREEN_ON)){
@@ -164,11 +168,11 @@ public class P1KBBacklightService extends Service {
                     Log.d(TAG, "Resume - backlight enabled");
                     Log.d(TAG,"LID_OPEN detected.");
                     if (keepBacklightOff) {
-                        MainActivity.toggleBacklightBit(false);
+                        toggleBacklightBit(false);
                     } else {
-                        MainActivity.toggleBacklightBit(true);
+                        toggleBacklightBit(true);
                     }
-                    MainActivity.updateTileStatus(context);
+                    updateTileStatus(context);
                 }
             }
         }
