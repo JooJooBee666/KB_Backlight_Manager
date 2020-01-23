@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.service.quicksettings.TileService;
@@ -32,8 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private static ToggleButton toggleServiceButton;
     private static Switch startupSwitch;
     private static Switch keepBacklightOffSwitch;
+    private static Switch quicksettingEnabledSwitch;
     public static Boolean startOnBoot = true;
     public static Boolean keepBacklightOff = false;
+    public static Boolean quickSettingEnabled = true;
     boolean serviceBound = false;
 
     P1KBService backlightService;
@@ -47,12 +50,15 @@ public class MainActivity extends AppCompatActivity {
         toggleServiceButton = findViewById(R.id.toggleServiceButton);
         startupSwitch = findViewById(R.id.startOnBootSwitch);
         keepBacklightOffSwitch = findViewById(R.id.backlightDisabledSwitch);
+        quicksettingEnabledSwitch = findViewById(R.id.quickSettingEnableSwitch);
 
         SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
         startOnBoot = settings.getBoolean("startOnBoot", true);
         keepBacklightOff = settings.getBoolean("keepBacklightOff", false);
+        quickSettingEnabled = settings.getBoolean("quicksettingEnabled", true);
         startupSwitch.setChecked(startOnBoot);
         keepBacklightOffSwitch.setChecked(keepBacklightOff);
+        quicksettingEnabledSwitch.setChecked(quickSettingEnabled);
 
         startupSwitch.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -66,6 +72,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 keepBacklightOff = keepBacklightOffSwitch.isChecked();
+                changeTileService();
+                SaveSettings();
+            }
+        });
+
+        quicksettingEnabledSwitch.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                quickSettingEnabled = quicksettingEnabledSwitch.isChecked();
+                changeTileService();
                 SaveSettings();
             }
         });
@@ -116,11 +132,24 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("startOnBoot", startOnBoot);
         editor.putBoolean("keepBacklightOff", keepBacklightOff);
-
+        editor.putBoolean("quickSettingEnabled", quickSettingEnabled);
         // Commit the edits
         editor.apply();
     }
 
+    private void changeTileService() {
+        PackageManager pm = getPackageManager();
+        ComponentName component = new ComponentName(this.getPackageName(), P1KBTileService.class.getName());
+        if (quickSettingEnabled) {
+            pm.setComponentEnabledSetting(component,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+        } else {
+            pm.setComponentEnabledSetting(component,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
+        }
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

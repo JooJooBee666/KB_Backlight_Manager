@@ -5,4 +5,7 @@
     <string name="keep_backlight_off">Keep Backlight Off</string>
     <string name="start_service">Start Service</string>
     <string name="stop_service">Stop Service</string>
+    <string name="enable_quicksetting_tile">Enable Quicksetting Tile</string>
+    <string name="servicetogglebutton">ServiceToggleButton</string>
+    <string name="kb_backlight_manager">KB Backlight Manager</string>
 </resources>
