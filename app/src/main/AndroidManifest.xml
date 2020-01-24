@@ -17,9 +17,8 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name="com.madhopssoft.kbbacklightmanager.MainActivity"
-            android:screenOrientation="portrait"
-            >
+            android:name="com.madhopssoft.kbbacklightmanager.MainActivity" >
+            <!--android:screenOrientation="portrait" -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
