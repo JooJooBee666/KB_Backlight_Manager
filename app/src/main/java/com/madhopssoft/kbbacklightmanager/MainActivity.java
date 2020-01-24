@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
             TileService.requestListeningState(context, new ComponentName(context, P1KBTileService.class));
             Log.d(TAG, "Sending Quicksetting toggle update intent.");
             Intent tileIntent = new Intent(Constants.ACTION.TOGGLE_P1KEYBOARD_BACKLIGHT);
-            thisActivity.sendBroadcast(tileIntent);
+            context.sendBroadcast(tileIntent);
         } catch (Exception e) {
             Log.e(TAG, "Failed to send intent.");
             e.printStackTrace();

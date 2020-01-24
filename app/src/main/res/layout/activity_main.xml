@@ -27,17 +27,15 @@
     <Switch
         android:id="@+id/startOnBootSwitch"
         android:layout_width="wrap_content"
-        android:layout_height="92dp"
+        android:layout_height="104dp"
+        android:layout_below="@+id/imageView"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_marginStart="54dp"
-        android:layout_marginTop="219dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="54dp"
-        android:layout_marginBottom="420dp"
         android:text="@string/enable_on_boot"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <ToggleButton
         android:id="@+id/toggleServiceButton"
@@ -66,26 +64,28 @@
     <Switch
         android:id="@+id/backlightDisabledSwitch"
         android:layout_width="287dp"
-        android:layout_height="86dp"
+        android:layout_height="104dp"
+        android:layout_below="@+id/quickSettingEnableSwitch"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="54dp"
-        android:layout_marginTop="450dp"
+        android:layout_marginTop="25dp"
         android:layout_marginEnd="54dp"
         android:text="@string/keep_backlight_off"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <Switch
         android:id="@+id/quickSettingEnableSwitch"
         android:layout_width="287dp"
-        android:layout_height="86dp"
+        android:layout_height="104dp"
+        android:layout_below="@+id/startOnBootSwitch"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="54dp"
-        android:layout_marginTop="335dp"
+        android:layout_marginTop="25dp"
         android:layout_marginEnd="54dp"
         android:enabled="true"
         android:text="@string/enable_quicksetting_tile"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
 </RelativeLayout>
