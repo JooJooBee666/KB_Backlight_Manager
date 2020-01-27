@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
         serviceIntent.setAction(Constants.ACTION.STOP_FOREGROUND_ACTION);
         unbindService(mConnection);
         this.stopService(serviceIntent);
+        startService(serviceIntent);
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {

@@ -16,8 +16,11 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.madhopssoft.kbbacklightmanager.Constants.ACTION;
+
 import java.util.Objects;
 
+import static android.app.NotificationManager.IMPORTANCE_LOW;
 import static com.madhopssoft.kbbacklightmanager.MainActivity.*;
 
 
@@ -28,6 +31,7 @@ public class P1KBService extends Service {
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
     public static boolean serviceRunning = false;
     private static boolean kbOpened = false;
+
     // Binder given to clients
     private final IBinder serviceBinder = new P1KBLocalBinder();
 
@@ -58,52 +62,69 @@ public class P1KBService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent == null){
-            Log.e(TAG,"No intent sent to service. Not action taken.");
-        }
-        if (Objects.requireNonNull(intent.getAction()).equals(Constants.ACTION.START_FOREGROUND_ACTION)) {
-            Log.d(TAG, "Received Start Foreground Intent");
-            try {
-                String input = intent.getStringExtra("inputExtra");
-                createNotificationChannel();
-                Intent notificationIntent = new Intent(this, MainActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                        0, notificationIntent, 0);
-                Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setContentTitle("Pro1 KB Backlight Manager")
-                        .setContentText(input)
-                        .setOngoing(true)
-                        .setSmallIcon(R.mipmap.ic_notif2)
-                        .setContentIntent(pendingIntent)
-                        .build();
-                startForeground(1, notification);
-                serviceRunning = true;
-                try {
-                    updateServiceStatus("Running");
-                    updateTileStatus(this);
-                } catch (Exception e) {
-                    Log.w(TAG,"Failed to update service status on MainActivity.");
-                    e.printStackTrace();
+        if(intent != null) {
+            String action = intent.getAction();
+            switch (action) {
+                case (ACTION.START_FOREGROUND_ACTION): {
+                    startThisService(intent, flags, startId);
+                    break;
                 }
-            } catch (Exception e) {
-                Log.e(TAG,"Failed to start service.");
-                e.printStackTrace();
+                case (ACTION.STOP_FOREGROUND_ACTION):{
+                    Log.d(TAG, "Received Stop Foreground Intent");
+                    //your end servce code
+                    try {
+                        updateServiceStatus("Stopped");
+                    } catch (Exception e) {
+                        Log.w(TAG,"Failed to update service status on MainActivity.");
+                        e.printStackTrace();
+                    }
+                    stopForeground(true);
+                    stopSelf();
+                    break;
+                }
+                default: {
+                    Log.w(TAG,"Unknown intent - " + action + ". No action taken.");
+                    break;
+                }
             }
-        } else if (intent.getAction().equals(Constants.ACTION.STOP_FOREGROUND_ACTION)) {
-            Log.d(TAG, "Received Stop Foreground Intent");
-            //your end servce code
-            try {
-                updateServiceStatus("Stopped");
-            } catch (Exception e) {
-                Log.w(TAG,"Failed to update service status on MainActivity.");
-                e.printStackTrace();
-            }
-            stopForeground(true);
-            stopSelf();
+        } else {
+            Log.w(TAG,"No intent sent to service. Starting service.");
+            startThisService(intent, flags, startId);
         }
         return START_NOT_STICKY;
     }
 
+    private void startThisService(Intent intent, int flags, int startId){
+        Log.d(TAG, "Received Start Foreground Intent");
+        try {
+            String input = intent.getStringExtra("inputExtra");
+            createNotificationChannel();
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                    0, notificationIntent, 0);
+            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle("Pro1 KB Backlight Manager")
+                    .setContentText(input)
+                    .setOngoing(true)
+                    .setSmallIcon(R.mipmap.ic_notif2)
+                    .setPriority(IMPORTANCE_LOW)
+                    .setContentIntent(pendingIntent)
+                    .build();
+            startForeground(1, notification);
+            serviceRunning = true;
+            try {
+                updateServiceStatus("Running");
+                updateTileStatus(this);
+            } catch (Exception e) {
+                Log.w(TAG,"Failed to update service status on MainActivity.");
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            Log.e(TAG,"Failed to start service.");
+            e.printStackTrace();
+        }
+
+    }
     private void createNotificationChannel() {
         NotificationChannel serviceChannel = new NotificationChannel(
                 CHANNEL_ID,
@@ -162,7 +183,7 @@ public class P1KBService extends Service {
                 updateTileStatus(context);
             }
 
-            if (myIntent.getAction().equals(Intent.ACTION_SCREEN_ON)){
+            if (Objects.requireNonNull(myIntent.getAction()).equals(Intent.ACTION_SCREEN_ON)){
                 //if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 if (kbOpened) {
                     Log.d(TAG, "Resume - backlight enabled");
