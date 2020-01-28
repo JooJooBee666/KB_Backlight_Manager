@@ -1,4 +1,4 @@
-package com.madhopssoft.kbbacklightmanager;
+package com.madhopssoft.P1KBBLmanager;
 
 
 import android.animation.ValueAnimator;
@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -21,9 +20,10 @@ import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatDrawableManager;
 
+import static com.madhopssoft.P1KBBLmanager.KBLightsMethods.*;
 
 
-public class P1KBTileService extends TileService {
+public class KBTileService extends TileService {
 
     private static final String TAG = "P1KBTileService";
 
@@ -33,7 +33,7 @@ public class P1KBTileService extends TileService {
         Log.i(TAG, "onTileAdded");
         Tile tile = getQsTile();
         if (tile != null) {
-            if (MainActivity.getLightState()) {
+            if (getLightState()) {
                 tile.setState(Tile.STATE_ACTIVE);
             } else {
                 tile.setState(Tile.STATE_INACTIVE);
@@ -55,7 +55,7 @@ public class P1KBTileService extends TileService {
         Log.i(TAG, "onStartListening");
         Tile tile = getQsTile();
         if (tile != null) {
-            if (MainActivity.getLightState()) {
+            if (getLightState()) {
                 tile.setState(Tile.STATE_ACTIVE);
             } else {
                 tile.setState(Tile.STATE_INACTIVE);
@@ -121,13 +121,13 @@ public class P1KBTileService extends TileService {
 
         Tile tile = this.getQsTile();
 
-        boolean lightEnabled = MainActivity.getLightState();
+        boolean lightEnabled = getLightState();
 
         if (lightEnabled) {
-            MainActivity.toggleBacklightBit(false);
+            toggleBacklightBit(false);
         } else
         {
-            MainActivity.toggleBacklightBit(true);
+            toggleBacklightBit(true);
         }
 
         //Icon icon;
@@ -138,7 +138,7 @@ public class P1KBTileService extends TileService {
         if (tile.getState() == Tile.STATE_INACTIVE) {
 
         //    label = "On ";
-            MainActivity.toggleBacklightBit(true);
+            toggleBacklightBit(true);
         //    icon = Icon.createWithResource(getApplicationContext(), R.drawable.ic_world);
 
             state = Tile.STATE_ACTIVE;
@@ -146,7 +146,7 @@ public class P1KBTileService extends TileService {
         } else {
 
          //   label = "Off";
-            MainActivity.toggleBacklightBit(false);
+            toggleBacklightBit(false);
         //    icon = Icon.createWithResource(getApplicationContext(), android.R.drawable.ic_dialog_alert);
 
             state = Tile.STATE_INACTIVE;

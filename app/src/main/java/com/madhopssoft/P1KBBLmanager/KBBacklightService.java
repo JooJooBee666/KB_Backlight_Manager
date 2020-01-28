@@ -1,4 +1,4 @@
-package com.madhopssoft.kbbacklightmanager;
+package com.madhopssoft.P1KBBLmanager;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -6,25 +6,27 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
+import android.service.quicksettings.TileService;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import com.madhopssoft.kbbacklightmanager.Constants.ACTION;
+import com.madhopssoft.P1KBBLmanager.Constants.ACTION;
 
 import java.util.Objects;
 
 import static android.app.NotificationManager.IMPORTANCE_LOW;
-import static com.madhopssoft.kbbacklightmanager.MainActivity.*;
+import static com.madhopssoft.P1KBBLmanager.Constants.ACTION.TOGGLE_P1KEYBOARD_BACKLIGHT;
+import static com.madhopssoft.P1KBBLmanager.KBLightsMethods.*;
 
-
-public class P1KBService extends Service {
+public class KBBacklightService extends Service {
 
     private final String TAG = "P1KBService";
     private final int LID_CLOSED = 0;
@@ -33,7 +35,7 @@ public class P1KBService extends Service {
     private static boolean kbOpened = false;
 
     // Binder given to clients
-    private final IBinder serviceBinder = new P1KBLocalBinder();
+    private final IBinder serviceBinder = new KBLocalBinder();
 
     @Override
     public void onCreate() {
@@ -52,7 +54,7 @@ public class P1KBService extends Service {
         serviceRunning = false;
         this.unregisterReceiver(mBroadcastReceiver);
         try {
-            updateServiceStatus("Stopped");
+            updateServiceStatus(this,"Stopped");
         } catch (Exception e) {
             Log.w(TAG,"Failed to update service status on MainActivity.");
             e.printStackTrace();
@@ -73,7 +75,7 @@ public class P1KBService extends Service {
                     Log.d(TAG, "Received Stop Foreground Intent");
                     //your end servce code
                     try {
-                        updateServiceStatus("Stopped");
+                        updateServiceStatus(this, "Stopped");
                     } catch (Exception e) {
                         Log.w(TAG,"Failed to update service status on MainActivity.");
                         e.printStackTrace();
@@ -103,7 +105,7 @@ public class P1KBService extends Service {
             PendingIntent pendingIntent = PendingIntent.getActivity(this,
                     0, notificationIntent, 0);
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setContentTitle("Pro1 KB Backlight Manager")
+                    .setContentTitle("KB Backlight Manager")
                     .setContentText(input)
                     .setOngoing(true)
                     .setSmallIcon(R.mipmap.ic_notif2)
@@ -113,7 +115,7 @@ public class P1KBService extends Service {
             startForeground(1, notification);
             serviceRunning = true;
             try {
-                updateServiceStatus("Running");
+                updateServiceStatus(this,"Running");
                 updateTileStatus(this);
             } catch (Exception e) {
                 Log.w(TAG,"Failed to update service status on MainActivity.");
@@ -141,10 +143,10 @@ public class P1KBService extends Service {
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
-    class P1KBLocalBinder extends Binder {
-        P1KBService getService() {
+    class KBLocalBinder extends Binder {
+        KBBacklightService getService() {
             // Return this instance of LocalService so clients can call public methods
-            return P1KBService.this;
+            return KBBacklightService.this;
         }
     }
 
@@ -153,6 +155,25 @@ public class P1KBService extends Service {
         return serviceBinder;
     }
 
+    private void updateTileStatus(Context context){
+        //Enable listening state on tile and update the status
+        try {
+            TileService.requestListeningState(context, new ComponentName(context, KBTileService.class));
+            Log.d(TAG, "Sending Quicksetting toggle update intent.");
+            Intent tileIntent = new Intent(TOGGLE_P1KEYBOARD_BACKLIGHT);
+            context.sendBroadcast(tileIntent);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to send intent.");
+            e.printStackTrace();
+        }
+    }
+    private void updateServiceStatus(Context context, String status){
+        //Send Broadcast intent to the Main Activity (if running) to update the service status
+        Intent mIntent = new Intent(getPackageName());
+        mIntent.putExtra("status", status);
+        mIntent.setAction(ACTION.UPDATE_SERVICE_STATUS);
+        sendBroadcast(mIntent);
+    }
 
     public BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override

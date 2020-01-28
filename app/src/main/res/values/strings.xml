@@ -9,4 +9,5 @@
     <string name="servicetogglebutton">ServiceToggleButton</string>
     <string name="kb_backlight_manager">KB Backlight Manager</string>
     <string name="foreground_service_info">Manages the Keyboard Backlight</string>
+    <string name="service_status">Service Status:</string>
 </resources>

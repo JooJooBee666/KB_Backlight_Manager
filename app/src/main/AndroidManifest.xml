@@ -2,7 +2,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.madhopssoft.kbbacklightmanager"
+    package="com.madhopssoft.P1KBBLmanager"
     >
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -17,17 +17,16 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name="com.madhopssoft.kbbacklightmanager.MainActivity" >
+            android:name=".MainActivity" >
             <!--android:screenOrientation="portrait" -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
-            android:name="com.madhopssoft.kbbacklightmanager.P1KBService"
+            android:name=".KBBacklightService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -38,7 +37,7 @@
         </service>
 
         <service
-            android:name="com.madhopssoft.kbbacklightmanager.P1KBTileService"
+            android:name=".KBTileService"
             android:icon="@drawable/ic_icon"
             android:label="KB Backlight"
             android:screenOrientation="portrait"
@@ -54,7 +53,7 @@
 
         </service>
 
-        <receiver android:name="com.madhopssoft.kbbacklightmanager.P1KBStartupReceiver"
+        <receiver android:name=".KBStartupReceiver"
             android:enabled="true"
             android:exported="true"
             android:directBootAware="true">
