@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="0dp"
+    android:paddingTop="0dp"
+    android:paddingRight="0dp"
+    android:paddingBottom="0dp">
+
+    <TextView
+        android:id="@+id/serviceStatusText"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="48dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginBottom="6dp"
+        android:gravity="center"
+        android:text="@string/service_status_stopped"
+        android:textSize="18sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="579dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginTop="0dp"
+                android:contentDescription="@string/kb_backlight_manager"
+                android:scaleType="centerCrop"
+                app:srcCompat="@mipmap/banner" />
+
+            <Switch
+                android:id="@+id/startOnBootSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginStart="54dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="54dp"
+                android:text="@string/enable_on_boot"
+                android:textSize="16sp" />
+
+            <Switch
+                android:id="@+id/backlightDisabledSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginStart="54dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="54dp"
+                android:text="@string/keep_backlight_off"
+                android:textSize="16sp" />
+
+            <Switch
+                android:id="@+id/quickSettingEnableSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginStart="54dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="54dp"
+                android:enabled="true"
+                android:text="@string/enable_quicksetting_tile"
+                android:textSize="16sp" />
+
+            <ToggleButton
+                android:id="@+id/toggleServiceButton"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginStart="76dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="74dp"
+                android:layout_marginBottom="55dp"
+                android:text="@string/servicetogglebutton"
+                android:textOff="@string/start_service"
+                android:textOn="@string/stop_service" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
