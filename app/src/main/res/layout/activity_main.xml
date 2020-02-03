@@ -37,7 +37,7 @@
                 android:layout_marginTop="0dp"
                 android:contentDescription="@string/kb_backlight_manager"
                 android:scaleType="centerCrop"
-                app:srcCompat="@mipmap/banner" />
+                android:src="@mipmap/banner" />
 
             <Switch
                 android:id="@+id/startOnBootSwitch"
