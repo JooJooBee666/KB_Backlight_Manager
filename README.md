@@ -1,5 +1,5 @@
  
-<h1>**KB Backlight Manager**</h1>
+<h1>KB Backlight Manager</h1>
 
 Application to control the keyboard backlight on the FXTec Pro1 phone when using LineageOS.
 
