@@ -109,7 +109,7 @@ public class KBBacklightService extends Service {
                     .setContentText(input)
                     .setOngoing(true)
                     .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
-                    .setGroup("KBBacklightService")
+                    .setGroup("PPTracker")
                     .setGroupSummary(false)
                     .setSmallIcon(R.mipmap.ic_notif2)
                     .setPriority(IMPORTANCE_LOW)
